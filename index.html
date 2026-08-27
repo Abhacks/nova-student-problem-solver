@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NOVA | Student Problem Solver</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b12;
+            color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 30px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #202633;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .status {
+            font-size: 0.8rem;
+            color: #8b95a7;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 70px 20px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero span {
+            color: #7dd3fc;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            margin: 15px 0;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: auto;
+            color: #9ca6b7;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: #10151f;
+            border: 1px solid #242c3a;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            margin-top: 15px;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #303949;
+            background: #080b12;
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 18px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            background: #f5f7fa;
+            color: #080b12;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #result {
+            display: none;
+        }
+
+        .step {
+            padding: 18px 0;
+            border-bottom: 1px solid #252d3a;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #7dd3fc;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #667085;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">NOVA</div>
+    <div class="status">STUDENT PROBLEM SOLVER</div>
+</header>
+
+<main>
+
+    <section class="hero">
+        <span>Think. Break it down. Move forward.</span>
+
+        <h1>Turn problems into progress.</h1>
+
+        <p>
+            NOVA is an experimental student-focused tool designed to
+            transform overwhelming problems into smaller, actionable steps.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2>What's challenging you?</h2>
+
+        <textarea
+            id="problem"
+            placeholder="Example: I have several exams coming up and I don't know how to organize my study time."
+        ></textarea>
+
+        <button onclick="solveProblem()">Break It Down</button>
+    </section>
+
+    <section class="card" id="result">
+
+        <h2>Your NOVA Breakdown</h2>
+
+        <div class="step">
+            <strong>01 — Define the problem</strong>
+            <p id="definition"></p>
+        </div>
+
+        <div class="step">
+            <strong>02 — Identify the first move</strong>
+            <p id="firstMove"></p>
+        </div>
+
+        <div class="step">
+            <strong>03 — Create small actions</strong>
+            <p id="actions"></p>
+        </div>
+
+        <div class="step">
+            <strong>04 — Keep moving</strong>
+            <p>
+                Don't try to solve everything at once. Complete one
+                meaningful action, then reassess.
+            </p>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    NOVA • Built as a software engineering learning project
+</footer>
+
+<script>
+    function solveProblem() {
+
+        const problem = document.getElementById("problem").value.trim();
+
+        if (problem === "") {
+            alert("Tell NOVA what's challenging you first.");
+            return;
+        }
+
+        document.getElementById("result").style.display = "block";
+
+        document.getElementById("definition").textContent =
+            "Your current challenge is: " + problem;
+
+        document.getElementById("firstMove").textContent =
+            "Choose the smallest useful action you can complete today.";
+
+        document.getElementById("actions").textContent =
+            "Write down the goal, divide it into smaller tasks, choose one task, and give yourself a realistic deadline.";
+
+        document.getElementById("result").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+</script>
+
+</body>
+</html>
