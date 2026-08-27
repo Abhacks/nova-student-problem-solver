@@ -4,23 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NOVA | Student Problem Solver</title>
+    <meta
+        name="description"
+        content="NOVA is a student-focused problem-to-action productivity system."
+    >
+
+    <title>NOVA | Problem to Progress</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-    <div class="logo">NOVA</div>
+<header class="site-header">
 
-    <div class="badge">
-        STUDENT OPERATING SYSTEM
+    <a href="#" class="logo">NOVA</a>
+
+    <div class="header-right">
+        <span class="online-dot"></span>
+        SYSTEM ONLINE
     </div>
+
 </header>
 
 
 <main>
+
+    <!-- HERO -->
 
     <section class="hero">
 
@@ -30,37 +40,81 @@
 
         <h1>
             Turn problems<br>
-            into progress.
+            into <span>progress.</span>
         </h1>
 
         <p>
-            NOVA is a student-focused productivity experiment
-            designed to turn overwhelming problems into
-            smaller, actionable steps.
+            NOVA helps you turn overwhelming problems into
+            clear priorities, actionable steps and measurable progress.
         </p>
 
     </section>
 
 
-    <!-- PROBLEM SOLVER -->
+    <!-- MODES -->
 
-    <section class="card">
+    <section class="card modes-card">
 
-        <h2>Problem Solver</h2>
+        <div class="section-heading">
+            <div>
+                <div class="label">01 / MODE</div>
+                <h2>Choose your focus</h2>
+            </div>
 
-        <p>
-            What's challenging you right now?
+            <span id="activeMode" class="mode-label">
+                AUTO
+            </span>
+        </div>
+
+        <p class="muted">
+            Choose a mode or let NOVA automatically detect what you need.
         </p>
 
-        <div class="tool">
+        <div class="mode-buttons">
 
-            <textarea
-                id="problem"
-                placeholder="Example: I have six courses and exams are approaching. I don't know how to organize everything."
-            ></textarea>
+            <button
+                class="mode-button"
+                onclick="setMode('study')"
+            >
+                <span>📚</span>
+                <strong>Study</strong>
+                <small>Learning & exams</small>
+            </button>
 
-            <button onclick="solveProblem()">
-                Break It Down →
+            <button
+                class="mode-button"
+                onclick="setMode('build')"
+            >
+                <span>🛠️</span>
+                <strong>Build</strong>
+                <small>Projects & ideas</small>
+            </button>
+
+            <button
+                class="mode-button"
+                onclick="setMode('goals')"
+            >
+                <span>🎯</span>
+                <strong>Goals</strong>
+                <small>Long-term progress</small>
+            </button>
+
+            <button
+                class="mode-button"
+                onclick="setMode('focus')"
+            >
+                <span>⚡</span>
+                <strong>Focus</strong>
+                <small>Time & execution</small>
+            </button>
+
+            <button
+                class="mode-button active"
+                onclick="setMode('auto')"
+            >
+                <span>✦</span>
+                <strong>Auto</strong>
+                <small>Let NOVA decide</small>
             </button>
 
         </div>
@@ -68,21 +122,65 @@
     </section>
 
 
-    <!-- PROBLEM RESULT -->
+    <!-- PROBLEM SOLVER -->
 
-    <section class="card result" id="result">
+    <section class="card solver-card">
 
-        <h2>Your NOVA Breakdown</h2>
+        <div class="label">02 / INPUT</div>
 
-        <div class="step">
+        <h2>What's challenging you?</h2>
 
-            <div class="step-number">
-                01 — DEFINE
+        <p class="muted">
+            Describe the problem in your own words. Don't worry
+            about making it perfect.
+        </p>
+
+        <textarea
+            id="problem"
+            placeholder="Example: I have exams in three weeks and haven't started studying..."
+        ></textarea>
+
+        <div class="solver-actions">
+
+            <button
+                class="primary-button"
+                onclick="solveProblem()"
+            >
+                Analyze with NOVA →
+            </button>
+
+            <button
+                class="secondary-button"
+                onclick="clearProblem()"
+            >
+                Clear
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- BREAKDOWN -->
+
+    <section
+        class="card result"
+        id="result"
+    >
+
+        <div class="result-top">
+
+            <div>
+                <div class="label">03 / ANALYSIS</div>
+                <h2>NOVA Breakdown</h2>
             </div>
 
-            <h3>The challenge</h3>
-
-            <p id="definition"></p>
+            <div
+                id="detectedMode"
+                class="detected-mode"
+            >
+                GENERAL
+            </div>
 
         </div>
 
@@ -90,29 +188,18 @@
         <div class="step">
 
             <div class="step-number">
-                02 — PRIORITIZE
+                01
             </div>
 
-            <h3>Your first move</h3>
+            <div>
+                <div class="step-label">
+                    DEFINE
+                </div>
 
-            <p id="firstMove"></p>
+                <h3>The challenge</h3>
 
-        </div>
-
-
-        <div class="step">
-
-    <div class="step-number">
-        03 — EXECUTE
-    </div>
-
-    <h3>Action plan</h3>
-
-    <p id="actions"></p>
-
-    <button onclick="addPlanToTasks()">
-        Add Plan to Action Board →
-    </button>
+                <p id="definition"></p>
+            </div>
 
         </div>
 
@@ -120,15 +207,67 @@
         <div class="step">
 
             <div class="step-number">
-                04 — CONTINUE
+                02
             </div>
 
-            <h3>Keep moving</h3>
+            <div>
+                <div class="step-label">
+                    PRIORITIZE
+                </div>
 
-            <p>
-                Progress doesn't require solving everything today.
-                Complete one meaningful action, then reassess.
-            </p>
+                <h3>Your first move</h3>
+
+                <p id="firstMove"></p>
+            </div>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                03
+            </div>
+
+            <div>
+                <div class="step-label">
+                    EXECUTE
+                </div>
+
+                <h3>Action plan</h3>
+
+                <div id="actions"></div>
+
+                <button
+                    class="primary-button small-button"
+                    onclick="addPlanToTasks()"
+                >
+                    Add Plan to Action Board →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                04
+            </div>
+
+            <div>
+                <div class="step-label">
+                    CONTINUE
+                </div>
+
+                <h3>Keep moving</h3>
+
+                <p>
+                    Progress doesn't require solving everything today.
+                    Complete one meaningful action, then reassess.
+                </p>
+            </div>
 
         </div>
 
@@ -137,100 +276,187 @@
 
     <!-- DASHBOARD -->
 
-    <section class="grid">
+    <section class="dashboard-grid">
 
-        <div class="card">
+        <!-- ACTION BOARD -->
 
-            <h2>Tasks</h2>
+        <div class="card action-card">
 
-            <p>
-                Turn your plan into actions.
+            <div class="label">04 / ACTION BOARD</div>
+
+            <h2>Your actions</h2>
+
+            <p class="muted">
+                Turn your plans into things you can actually complete.
             </p>
+
 
             <div class="task-input">
 
                 <input
                     id="taskInput"
                     type="text"
-                    placeholder="Add a task..."
+                    placeholder="Add an action..."
                     onkeydown="if(event.key === 'Enter') addTask()"
                 >
 
-                <button onclick="addTask()">
+                <button
+                    onclick="addTask()"
+                    class="add-button"
+                >
                     +
                 </button>
 
             </div>
+
 
             <div id="tasks"></div>
 
         </div>
 
 
-        <div class="card">
+        <!-- MOMENTUM -->
 
-    <h2>Your Momentum</h2>
+        <div class="card momentum-card">
 
-    <p id="progressText">
-        0% complete
-    </p>
+            <div class="label">05 / MOMENTUM</div>
 
-    <p id="progressStatus">
-        Ready to begin.
-    </p>
+            <h2 id="progressText">
+                0% complete
+            </h2>
 
-    <div class="progress">
-
-        <div
-            class="progress-bar"
-            id="progressBar"
-        ></div>
-
-    </div>
-
-    <p id="taskCount">
-        0 / 0 tasks completed
-    </p>
-
-    <button onclick="resetProgress()">
-        Reset Progress
-    </button>
-
-        </div>
-
-
-        <div class="card">
-
-            <h2>Mission</h2>
-
-            <p>
-                Build useful software, learn continuously,
-                and solve problems that matter.
+            <p
+                id="progressStatus"
+                class="muted"
+            >
+                Ready to begin.
             </p>
+
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    id="progressBar"
+                ></div>
+
+            </div>
+
+
+            <div class="momentum-meta">
+
+                <span id="taskCount">
+                    0 / 0 tasks completed
+                </span>
+
+                <button
+                    onclick="resetProgress()"
+                    class="text-button"
+                >
+                    Reset
+                </button>
+
+            </div>
 
         </div>
 
     </section>
 
 
-    <!-- ABOUT THE PROJECT -->
+    <!-- HOW IT WORKS -->
 
-    <section class="card">
+    <section class="card how-card">
 
-        <h2>Why NOVA exists</h2>
+        <div class="label">06 / SYSTEM</div>
 
-        <p>
-            NOVA started as a simple idea: many problems feel
-            overwhelming because they are treated as one giant problem.
-        </p>
+        <h2>How NOVA works</h2>
 
-        <br>
+        <div class="flow">
 
-        <p>
-            This project explores how software can help turn
-            that feeling into structure — one problem, one plan,
-            and one action at a time.
-        </p>
+            <div class="flow-item">
+                <span>01</span>
+                <strong>INPUT</strong>
+                <p>Describe the challenge.</p>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-item">
+                <span>02</span>
+                <strong>CLASSIFY</strong>
+                <p>Identify the type of problem.</p>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-item">
+                <span>03</span>
+                <strong>BREAK DOWN</strong>
+                <p>Turn it into smaller actions.</p>
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-item">
+                <span>04</span>
+                <strong>TRACK</strong>
+                <p>Measure your progress.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PROJECT STORY -->
+
+    <section class="story-grid">
+
+        <div class="card">
+
+            <div class="label">07 / WHY</div>
+
+            <h2>Why NOVA exists</h2>
+
+            <p class="muted">
+                Many problems feel overwhelming because we treat
+                them as one giant problem.
+            </p>
+
+            <br>
+
+            <p class="muted">
+                NOVA explores a simple idea:
+                what if software could help transform
+                uncertainty into structure and structure into action?
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="label">08 / BUILDER</div>
+
+            <h2>Built to learn</h2>
+
+            <p class="muted">
+                NOVA is an evolving software engineering project.
+                Every feature is an experiment in turning a real
+                problem into a usable digital solution.
+            </p>
+
+            <div class="tech-list">
+
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>LocalStorage</span>
+                <span>GitHub Pages</span>
+
+            </div>
+
+        </div>
 
     </section>
 
@@ -239,11 +465,15 @@
 
 <footer>
 
-    NOVA © 2026
+    <strong>NOVA</strong>
 
-    <br>
+    <p>
+        Problem → Plan → Action → Progress
+    </p>
 
-    Built as a software engineering learning project.
+    <small>
+        Built as a software engineering learning project · 2026
+    </small>
 
 </footer>
 
