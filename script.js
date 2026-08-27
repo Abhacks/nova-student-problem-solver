@@ -311,3 +311,45 @@ function escapeHTML(text) {
 /* Load saved tasks */
 
 renderTasks();
+function addPlanToTasks() {
+
+    const actionText = document
+        .getElementById("actions")
+        .innerText
+        .trim();
+
+    if (!actionText) {
+        alert("Create a NOVA plan first.");
+        return;
+    }
+
+    const actionLines = actionText
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
+    actionLines.forEach(line => {
+
+        const cleanTask = line
+            .replace(/^\d+\.\s*/, "")
+            .trim();
+
+        if (cleanTask) {
+            tasks.push({
+                text: cleanTask,
+                completed: false
+            });
+        }
+    });
+
+    saveTasks();
+    renderTasks();
+
+    alert("Your NOVA action plan has been added to your Action Board.");
+
+    document
+        .getElementById("tasks")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
