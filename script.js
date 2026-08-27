@@ -2,6 +2,7 @@ const problemInput = document.getElementById("problem");
 const result = document.getElementById("result");
 
 function solveProblem() {
+
     const problem = problemInput.value.trim();
 
     if (!problem) {
@@ -9,14 +10,139 @@ function solveProblem() {
         return;
     }
 
-    document.getElementById("definition").textContent =
-        "Your challenge is: " + problem;
+    const text = problem.toLowerCase();
+
+    let category = "GENERAL CHALLENGE";
+    let priority = "";
+    let actions = [];
+
+    /* Detect academic problems */
+
+    if (
+        text.includes("exam") ||
+        text.includes("study") ||
+        text.includes("course") ||
+        text.includes("school") ||
+        text.includes("assignment") ||
+        text.includes("test")
+    ) {
+
+        category = "ACADEMIC CHALLENGE";
+
+        priority =
+            "Identify your courses, deadlines and the topics that need the most attention.";
+
+        actions = [
+            "List all your courses and upcoming deadlines.",
+            "Rank the subjects from most difficult to easiest.",
+            "Create a realistic study schedule.",
+            "Start with one high-priority topic today."
+        ];
+    }
+
+    /* Detect learning problems */
+
+    else if (
+        text.includes("learn") ||
+        text.includes("learning") ||
+        text.includes("programming") ||
+        text.includes("coding") ||
+        text.includes("skill")
+    ) {
+
+        category = "LEARNING CHALLENGE";
+
+        priority =
+            "Choose one specific skill and define what you want to be able to do with it.";
+
+        actions = [
+            "Choose one technology or skill to focus on.",
+            "Learn the fundamentals before jumping into advanced topics.",
+            "Build a small project using what you learn.",
+            "Practice consistently and document your progress."
+        ];
+    }
+
+    /* Detect project problems */
+
+    else if (
+        text.includes("app") ||
+        text.includes("website") ||
+        text.includes("project") ||
+        text.includes("startup") ||
+        text.includes("business")
+    ) {
+
+        category = "PROJECT CHALLENGE";
+
+        priority =
+            "Turn the idea into a clearly defined problem and a small first version.";
+
+        actions = [
+            "Describe the problem your project is solving.",
+            "Identify the people who would use it.",
+            "Define the smallest useful version of the product.",
+            "Build and test one feature at a time."
+        ];
+    }
+
+    /* Detect time-management problems */
+
+    else if (
+        text.includes("time") ||
+        text.includes("busy") ||
+        text.includes("schedule") ||
+        text.includes("procrastinat") ||
+        text.includes("deadline")
+    ) {
+
+        category = "TIME MANAGEMENT CHALLENGE";
+
+        priority =
+            "Identify what matters most and remove unnecessary tasks.";
+
+        actions = [
+            "Write down everything you need to accomplish.",
+            "Separate urgent tasks from less important ones.",
+            "Choose your three most important tasks.",
+            "Give each task a specific time block."
+        ];
+    }
+
+    /* General problem */
+
+    else {
+
+        category = "GENERAL CHALLENGE";
+
+        priority =
+            "Define the desired outcome before deciding how to solve the problem.";
+
+        actions = [
+            "Clearly describe the problem.",
+            "Identify what is within your control.",
+            "Break the problem into smaller pieces.",
+            "Take the smallest useful action."
+        ];
+    }
+
+
+    document.getElementById("definition").innerHTML =
+        "<strong>" + category + "</strong><br><br>" +
+        escapeHTML(problem);
+
 
     document.getElementById("firstMove").textContent =
-        "Start by identifying the single most important outcome you want.";
+        priority;
 
-    document.getElementById("actions").textContent =
-        "Break the challenge into smaller tasks, choose the easiest useful step, and give yourself a realistic deadline.";
+
+    document.getElementById("actions").innerHTML =
+        actions
+            .map((action, index) =>
+                (index + 1) + ". " + escapeHTML(action)
+            )
+            .join("<br><br>");
+
 
     result.classList.add("show");
 
@@ -30,10 +156,15 @@ function solveProblem() {
    TASK MANAGER
 ------------------------------ */
 
-let tasks = JSON.parse(localStorage.getItem("novaTasks")) || [];
+let tasks = JSON.parse(
+    localStorage.getItem("novaTasks")
+) || [];
+
 
 function addTask() {
+
     const input = document.getElementById("taskInput");
+
     const text = input.value.trim();
 
     if (!text) {
@@ -48,33 +179,45 @@ function addTask() {
     input.value = "";
 
     saveTasks();
+
     renderTasks();
 }
 
 
 function toggleTask(index) {
-    tasks[index].completed = !tasks[index].completed;
+
+    tasks[index].completed =
+        !tasks[index].completed;
 
     saveTasks();
+
     renderTasks();
 }
 
 
 function deleteTask(index) {
+
     tasks.splice(index, 1);
 
     saveTasks();
+
     renderTasks();
 }
 
 
 function saveTasks() {
-    localStorage.setItem("novaTasks", JSON.stringify(tasks));
+
+    localStorage.setItem(
+        "novaTasks",
+        JSON.stringify(tasks)
+    );
 }
 
 
 function renderTasks() {
-    const container = document.getElementById("tasks");
+
+    const container =
+        document.getElementById("tasks");
 
     if (!container) {
         return;
@@ -84,7 +227,8 @@ function renderTasks() {
 
     tasks.forEach((task, index) => {
 
-        const taskElement = document.createElement("div");
+        const taskElement =
+            document.createElement("div");
 
         taskElement.className = "task";
 
@@ -97,7 +241,9 @@ function renderTasks() {
                 ${escapeHTML(task.text)}
             </span>
 
-            <button onclick="deleteTask(${index})">
+            <button
+                onclick="deleteTask(${index})"
+            >
                 Delete
             </button>
         `;
@@ -111,35 +257,48 @@ function renderTasks() {
 
 function updateProgress() {
 
-    const progressBar = document.getElementById("progressBar");
-    const progressText = document.getElementById("progressText");
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const progressText =
+        document.getElementById("progressText");
 
     if (!progressBar || !progressText) {
         return;
     }
 
     if (tasks.length === 0) {
+
         progressBar.style.width = "0%";
-        progressText.textContent = "0% complete";
+
+        progressText.textContent =
+            "0% complete";
+
         return;
     }
 
-    const completed = tasks.filter(task => task.completed).length;
+    const completed =
+        tasks.filter(
+            task => task.completed
+        ).length;
 
-    const percentage = Math.round(
-        (completed / tasks.length) * 100
-    );
+    const percentage =
+        Math.round(
+            (completed / tasks.length) * 100
+        );
 
-    progressBar.style.width = percentage + "%";
+    progressBar.style.width =
+        percentage + "%";
 
     progressText.textContent =
         percentage + "% complete";
 }
 
 
-/* Prevent HTML injection inside tasks */
+/* Security helper */
 
 function escapeHTML(text) {
+
     return text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
