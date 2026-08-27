@@ -169,20 +169,32 @@
 
         <div class="card">
 
-            <h2>Progress</h2>
+    <h2>Your Momentum</h2>
 
-            <p id="progressText">
-                0% complete
-            </p>
+    <p id="progressText">
+        0% complete
+    </p>
 
-            <div class="progress">
+    <p id="progressStatus">
+        Ready to begin.
+    </p>
 
-                <div
-                    class="progress-bar"
-                    id="progressBar"
-                ></div>
+    <div class="progress">
 
-            </div>
+        <div
+            class="progress-bar"
+            id="progressBar"
+        ></div>
+
+    </div>
+
+    <p id="taskCount">
+        0 / 0 tasks completed
+    </p>
+
+    <button onclick="resetProgress()">
+        Reset Progress
+    </button>
 
         </div>
 
