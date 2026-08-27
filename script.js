@@ -263,9 +263,24 @@ function updateProgress() {
     const progressText =
         document.getElementById("progressText");
 
-    if (!progressBar || !progressText) {
+    const progressStatus =
+        document.getElementById("progressStatus");
+
+    const taskCount =
+        document.getElementById("taskCount");
+
+
+    if (
+        !progressBar ||
+        !progressText ||
+        !progressStatus ||
+        !taskCount
+    ) {
         return;
     }
+
+
+    /* No tasks */
 
     if (tasks.length === 0) {
 
@@ -274,24 +289,105 @@ function updateProgress() {
         progressText.textContent =
             "0% complete";
 
+        progressStatus.textContent =
+            "Ready to begin.";
+
+        taskCount.textContent =
+            "0 / 0 tasks completed";
+
         return;
     }
+
+
+    /* Calculate progress */
 
     const completed =
         tasks.filter(
             task => task.completed
         ).length;
 
+
+    const total =
+        tasks.length;
+
+
     const percentage =
         Math.round(
-            (completed / tasks.length) * 100
+            (completed / total) * 100
         );
+
+
+    /* Update progress bar */
 
     progressBar.style.width =
         percentage + "%";
 
+
+    /* Update percentage */
+
     progressText.textContent =
         percentage + "% complete";
+
+
+    /* Update task counter */
+
+    taskCount.textContent =
+        completed + " / " +
+        total +
+        " tasks completed";
+
+
+    /* Update NOVA status */
+
+    if (percentage === 0) {
+
+        progressStatus.textContent =
+            "Ready to begin.";
+
+    } else if (percentage < 50) {
+
+        progressStatus.textContent =
+            "Building momentum.";
+
+    } else if (percentage < 100) {
+
+        progressStatus.textContent =
+            "Almost there. Keep going.";
+
+    } else {
+
+        progressStatus.textContent =
+            "Mission complete! 🎯";
+
+    }
+}
+
+
+/* Reset all progress */
+
+function resetProgress() {
+
+    if (tasks.length === 0) {
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            "Reset all NOVA tasks and progress?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    tasks = [];
+
+    saveTasks();
+
+    renderTasks();
 }
 
 
