@@ -1,154 +1,325 @@
-const problemInput = document.getElementById("problem");
-const result = document.getElementById("result");
+let tasks = JSON.parse(
+    localStorage.getItem("novaTasks")
+) || [];
+
+let selectedMode = "auto";
+
+let currentActions = [];
+
+
+/* -----------------------------
+   MODE SYSTEM
+------------------------------ */
+
+const modeNames = {
+    auto: "AUTO",
+    study: "STUDY",
+    build: "BUILD",
+    goals: "GOALS",
+    focus: "FOCUS"
+};
+
+
+function setMode(mode) {
+
+    selectedMode = mode;
+
+    document.querySelectorAll(".mode-button")
+        .forEach(button => {
+            button.classList.remove("active");
+        });
+
+    const buttons =
+        document.querySelectorAll(".mode-button");
+
+    const modes =
+        ["study", "build", "goals", "focus", "auto"];
+
+    const index =
+        modes.indexOf(mode);
+
+    if (index >= 0 && buttons[index]) {
+        buttons[index].classList.add("active");
+    }
+
+    document.getElementById("activeMode")
+        .textContent = modeNames[mode];
+}
+
+
+/* -----------------------------
+   PROBLEM ANALYSIS
+------------------------------ */
 
 function solveProblem() {
 
-    const problem = problemInput.value.trim();
+    const input =
+        document.getElementById("problem");
+
+    const problem =
+        input.value.trim();
 
     if (!problem) {
-        alert("Tell NOVA what's challenging you first.");
+        alert(
+            "Tell NOVA what's challenging you first."
+        );
+
         return;
     }
 
-    const text = problem.toLowerCase();
 
-    let category = "GENERAL CHALLENGE";
-    let priority = "";
-    let actions = [];
+    const text =
+        problem.toLowerCase();
 
-    /* Detect academic problems */
+
+    let mode =
+        selectedMode === "auto"
+            ? detectMode(text)
+            : selectedMode;
+
+
+    const analysis =
+        generateAnalysis(mode);
+
+
+    currentActions =
+        analysis.actions;
+
+
+    document.getElementById("activeMode")
+        .textContent = modeNames[mode];
+
+
+    document.getElementById("detectedMode")
+        .textContent =
+        modeNames[mode] +
+        " CHALLENGE";
+
+
+    document.getElementById("definition")
+        .textContent = problem;
+
+
+    document.getElementById("firstMove")
+        .textContent =
+        analysis.priority;
+
+
+    document.getElementById("actions")
+        .innerHTML =
+        currentActions
+            .map((action, index) => `
+                <div class="action-line">
+                    <strong>${index + 1}.</strong>
+                    ${escapeHTML(action)}
+                </div>
+            `)
+            .join("");
+
+
+    document.getElementById("result")
+        .classList.add("show");
+
+
+    document.getElementById("result")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+
+/* -----------------------------
+   MODE DETECTION
+------------------------------ */
+
+function detectMode(text) {
 
     if (
         text.includes("exam") ||
         text.includes("study") ||
         text.includes("course") ||
-        text.includes("school") ||
         text.includes("assignment") ||
-        text.includes("test")
+        text.includes("school") ||
+        text.includes("test") ||
+        text.includes("lecture")
     ) {
-
-        category = "ACADEMIC CHALLENGE";
-
-        priority =
-            "Identify your courses, deadlines and the topics that need the most attention.";
-
-        actions = [
-            "List all your courses and upcoming deadlines.",
-            "Rank the subjects from most difficult to easiest.",
-            "Create a realistic study schedule.",
-            "Start with one high-priority topic today."
-        ];
+        return "study";
     }
 
-    /* Detect learning problems */
 
-    else if (
-        text.includes("learn") ||
-        text.includes("learning") ||
-        text.includes("programming") ||
-        text.includes("coding") ||
-        text.includes("skill")
-    ) {
-
-        category = "LEARNING CHALLENGE";
-
-        priority =
-            "Choose one specific skill and define what you want to be able to do with it.";
-
-        actions = [
-            "Choose one technology or skill to focus on.",
-            "Learn the fundamentals before jumping into advanced topics.",
-            "Build a small project using what you learn.",
-            "Practice consistently and document your progress."
-        ];
-    }
-
-    /* Detect project problems */
-
-    else if (
+    if (
         text.includes("app") ||
         text.includes("website") ||
+        text.includes("coding") ||
+        text.includes("code") ||
+        text.includes("programming") ||
         text.includes("project") ||
-        text.includes("startup") ||
-        text.includes("business")
+        text.includes("build") ||
+        text.includes("startup")
     ) {
-
-        category = "PROJECT CHALLENGE";
-
-        priority =
-            "Turn the idea into a clearly defined problem and a small first version.";
-
-        actions = [
-            "Describe the problem your project is solving.",
-            "Identify the people who would use it.",
-            "Define the smallest useful version of the product.",
-            "Build and test one feature at a time."
-        ];
+        return "build";
     }
 
-    /* Detect time-management problems */
 
-    else if (
-        text.includes("time") ||
-        text.includes("busy") ||
-        text.includes("schedule") ||
+    if (
+        text.includes("goal") ||
+        text.includes("achieve") ||
+        text.includes("future") ||
+        text.includes("career") ||
+        text.includes("habit") ||
+        text.includes("improve myself")
+    ) {
+        return "goals";
+    }
+
+
+    if (
         text.includes("procrastinat") ||
-        text.includes("deadline")
+        text.includes("distract") ||
+        text.includes("busy") ||
+        text.includes("deadline") ||
+        text.includes("time") ||
+        text.includes("focus")
     ) {
-
-        category = "TIME MANAGEMENT CHALLENGE";
-
-        priority =
-            "Identify what matters most and remove unnecessary tasks.";
-
-        actions = [
-            "Write down everything you need to accomplish.",
-            "Separate urgent tasks from less important ones.",
-            "Choose your three most important tasks.",
-            "Give each task a specific time block."
-        ];
+        return "focus";
     }
 
-    /* General problem */
 
-    else {
+    return "goals";
+}
 
-        category = "GENERAL CHALLENGE";
 
-        priority =
-            "Define the desired outcome before deciding how to solve the problem.";
+/* -----------------------------
+   ANALYSIS ENGINE
+------------------------------ */
 
-        actions = [
+function generateAnalysis(mode) {
+
+    if (mode === "study") {
+
+        return {
+            priority:
+                "Identify what you need to learn, when you need to know it, and which topics deserve the most attention.",
+
+            actions: [
+                "List your courses, topics and deadlines.",
+                "Rank each subject by difficulty and urgency.",
+                "Create a realistic study schedule.",
+                "Start with one high-priority topic today."
+            ]
+        };
+    }
+
+
+    if (mode === "build") {
+
+        return {
+            priority:
+                "Turn the idea into a clearly defined problem and build the smallest useful version first.",
+
+            actions: [
+                "Describe the problem your project is solving.",
+                "Identify the people who would use it.",
+                "Define the smallest useful version of the product.",
+                "Build and test one feature at a time."
+            ]
+        };
+    }
+
+
+    if (mode === "goals") {
+
+        return {
+            priority:
+                "Define the outcome you want and convert it into a measurable goal.",
+
+            actions: [
+                "Write down the exact result you want.",
+                "Choose a realistic deadline.",
+                "Break the goal into smaller milestones.",
+                "Complete one measurable action today."
+            ]
+        };
+    }
+
+
+    if (mode === "focus") {
+
+        return {
+            priority:
+                "Remove distractions and identify the single task that will create the most progress.",
+
+            actions: [
+                "Write down everything competing for your attention.",
+                "Choose your most important task.",
+                "Set a focused time block for it.",
+                "Remove one major distraction and begin."
+            ]
+        };
+    }
+
+
+    return {
+        priority:
+            "Define the desired outcome before deciding how to solve the problem.",
+
+        actions: [
             "Clearly describe the problem.",
             "Identify what is within your control.",
             "Break the problem into smaller pieces.",
             "Take the smallest useful action."
-        ];
+        ]
+    };
+}
+
+
+/* -----------------------------
+   ACTION BOARD
+------------------------------ */
+
+function addPlanToTasks() {
+
+    if (
+        !currentActions ||
+        currentActions.length === 0
+    ) {
+        alert(
+            "Create a NOVA plan first."
+        );
+
+        return;
     }
 
 
-    document.getElementById("definition").innerHTML =
-        "<strong>" + category + "</strong><br><br>" +
-        escapeHTML(problem);
+    currentActions.forEach(action => {
+
+        const alreadyExists =
+            tasks.some(
+                task => task.text === action
+            );
 
 
-    document.getElementById("firstMove").textContent =
-        priority;
+        if (!alreadyExists) {
 
+            tasks.push({
+                text: action,
+                completed: false
+            });
 
-    document.getElementById("actions").innerHTML =
-        actions
-            .map((action, index) =>
-                (index + 1) + ". " + escapeHTML(action)
-            )
-            .join("<br><br>");
+        }
 
-
-    result.classList.add("show");
-
-    result.scrollIntoView({
-        behavior: "smooth"
     });
+
+
+    saveTasks();
+
+    renderTasks();
+
+
+    document.getElementById("tasks")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
 }
 
 
@@ -156,27 +327,28 @@ function solveProblem() {
    TASK MANAGER
 ------------------------------ */
 
-let tasks = JSON.parse(
-    localStorage.getItem("novaTasks")
-) || [];
-
-
 function addTask() {
 
-    const input = document.getElementById("taskInput");
+    const input =
+        document.getElementById("taskInput");
 
-    const text = input.value.trim();
+    const text =
+        input.value.trim();
+
 
     if (!text) {
         return;
     }
+
 
     tasks.push({
         text: text,
         completed: false
     });
 
+
     input.value = "";
+
 
     saveTasks();
 
@@ -186,8 +358,14 @@ function addTask() {
 
 function toggleTask(index) {
 
+    if (!tasks[index]) {
+        return;
+    }
+
+
     tasks[index].completed =
         !tasks[index].completed;
+
 
     saveTasks();
 
@@ -205,55 +383,9 @@ function deleteTask(index) {
 }
 
 
-function saveTasks() {
-
-    localStorage.setItem(
-        "novaTasks",
-        JSON.stringify(tasks)
-    );
-}
-
-
-function renderTasks() {
-
-    const container =
-        document.getElementById("tasks");
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = "";
-
-    tasks.forEach((task, index) => {
-
-        const taskElement =
-            document.createElement("div");
-
-        taskElement.className = "task";
-
-        taskElement.innerHTML = `
-            <span
-                onclick="toggleTask(${index})"
-                class="${task.completed ? "completed" : ""}"
-                style="cursor:pointer"
-            >
-                ${escapeHTML(task.text)}
-            </span>
-
-            <button
-                onclick="deleteTask(${index})"
-            >
-                Delete
-            </button>
-        `;
-
-        container.appendChild(taskElement);
-    });
-
-    updateProgress();
-}
-
+/* -----------------------------
+   PROGRESS
+------------------------------ */
 
 function updateProgress() {
 
@@ -270,21 +402,15 @@ function updateProgress() {
         document.getElementById("taskCount");
 
 
-    if (
-        !progressBar ||
-        !progressText ||
-        !progressStatus ||
-        !taskCount
-    ) {
+    if (!progressBar) {
         return;
     }
 
 
-    /* No tasks */
-
     if (tasks.length === 0) {
 
-        progressBar.style.width = "0%";
+        progressBar.style.width =
+            "0%";
 
         progressText.textContent =
             "0% complete";
@@ -299,45 +425,34 @@ function updateProgress() {
     }
 
 
-    /* Calculate progress */
-
     const completed =
         tasks.filter(
             task => task.completed
         ).length;
 
 
-    const total =
-        tasks.length;
-
-
     const percentage =
         Math.round(
-            (completed / total) * 100
+            completed /
+            tasks.length *
+            100
         );
 
-
-    /* Update progress bar */
 
     progressBar.style.width =
         percentage + "%";
 
 
-    /* Update percentage */
-
     progressText.textContent =
         percentage + "% complete";
 
 
-    /* Update task counter */
-
     taskCount.textContent =
-        completed + " / " +
-        total +
+        completed +
+        " / " +
+        tasks.length +
         " tasks completed";
 
-
-    /* Update NOVA status */
 
     if (percentage === 0) {
 
@@ -358,12 +473,65 @@ function updateProgress() {
 
         progressStatus.textContent =
             "Mission complete! 🎯";
-
     }
 }
 
 
-/* Reset all progress */
+/* -----------------------------
+   RENDER TASKS
+------------------------------ */
+
+function renderTasks() {
+
+    const container =
+        document.getElementById("tasks");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    tasks.forEach((task, index) => {
+
+        const element =
+            document.createElement("div");
+
+
+        element.className =
+            "task";
+
+
+        element.innerHTML = `
+            <span
+                onclick="toggleTask(${index})"
+                class="${task.completed ? "completed" : ""}"
+            >
+                ${escapeHTML(task.text)}
+            </span>
+
+            <button
+                onclick="deleteTask(${index})"
+            >
+                Delete
+            </button>
+        `;
+
+
+        container.appendChild(element);
+    });
+
+
+    updateProgress();
+}
+
+
+/* -----------------------------
+   RESET
+------------------------------ */
 
 function resetProgress() {
 
@@ -385,13 +553,31 @@ function resetProgress() {
 
     tasks = [];
 
+
     saveTasks();
 
     renderTasks();
 }
 
 
-/* Security helper */
+/* -----------------------------
+   CLEAR PROBLEM
+------------------------------ */
+
+function clearProblem() {
+
+    document.getElementById("problem")
+        .value = "";
+
+
+    document.getElementById("result")
+        .classList.remove("show");
+}
+
+
+/* -----------------------------
+   SECURITY
+------------------------------ */
 
 function escapeHTML(text) {
 
@@ -404,48 +590,22 @@ function escapeHTML(text) {
 }
 
 
-/* Load saved tasks */
+/* -----------------------------
+   STORAGE
+------------------------------ */
+
+function saveTasks() {
+
+    localStorage.setItem(
+        "novaTasks",
+        JSON.stringify(tasks)
+    );
+}
+
+
+/* -----------------------------
+   STARTUP
+------------------------------ */
 
 renderTasks();
-function addPlanToTasks() {
-
-    const actionText = document
-        .getElementById("actions")
-        .innerText
-        .trim();
-
-    if (!actionText) {
-        alert("Create a NOVA plan first.");
-        return;
-    }
-
-    const actionLines = actionText
-        .split("\n")
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
-
-    actionLines.forEach(line => {
-
-        const cleanTask = line
-            .replace(/^\d+\.\s*/, "")
-            .trim();
-
-        if (cleanTask) {
-            tasks.push({
-                text: cleanTask,
-                completed: false
-            });
-        }
-    });
-
-    saveTasks();
-    renderTasks();
-
-    alert("Your NOVA action plan has been added to your Action Board.");
-
-    document
-        .getElementById("tasks")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-}
+setMode("auto");
