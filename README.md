@@ -9,6 +9,9 @@ Instead of treating a difficult problem as one giant task, NOVA breaks it down i
 ## 🚀 Live Demo
 
 https://abhacks.github.io/nova-student-problem-solver/
+## 📸 Preview
+
+![NOVA Preview](screenshot.png)
 
 ---
 
